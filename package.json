@@ -1,0 +1,28 @@
+{
+  "name": "porfolio-tracker-frontend",
+  "description": "Shared React Frontend for the PortfolioTracker App (.NET, MERN, PHP Stacks)",
+  "main": "index.js",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "e2e": "playwright test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/preethamkh/porfolio-tracker-frontend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/preethamkh/porfolio-tracker-frontend/issues"
+  },
+  "homepage": "https://github.com/preethamkh/porfolio-tracker-frontend#readme"
+}
