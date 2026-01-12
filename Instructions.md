@@ -1,4 +1,4 @@
-# Instructions to create the entire project
+# Instructions to create the entire project (not very well formatted - DRAFT)
 
 # Create new folder
 
