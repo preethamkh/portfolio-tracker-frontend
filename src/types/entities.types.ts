@@ -10,15 +10,15 @@
  * Note: Guid in C# is represented as string in TypeScript/JavaScript
  */
 
-// USER ENTITY
+// ============================================================================
+// USER
+// ============================================================================
 
-export interface UserDto {
+export interface User {
   id: string;
   email: string;
   fullName?: string | null;
   createdAt: string; // ISO 8601 date string
-  // todo: do I need this? don't have this in C# DTO
-  // updatedAt?: string | null;
   lastLogin?: string | null;
 }
 
@@ -33,7 +33,9 @@ export interface UpdateUserDto {
   fullName?: string | null;
 }
 
-// PORTFOLIO ENTITY
+// ============================================================================
+// PORTFOLIO
+// ============================================================================
 
 export interface PortfolioDto {
   id: string;
@@ -65,7 +67,9 @@ export interface UpdatePortfolioDto {
   isDefault?: boolean;
 }
 
-// SECURITY ENTITY (STOCK/BOND/FUND)
+// ============================================================================
+// SECURITY
+// ============================================================================
 
 export interface Security {
   id: string;
@@ -104,18 +108,28 @@ export interface UpdateSecurityDto {
   industry?: string;
 }
 
-// For search results
+// For search results (search local db)
 export interface SecuritySearchResult {
-  // todo: add id?
+  id: string;
   symbol: string;
   name: string;
   exchange?: string;
   securityType?: string;
-  // todo: currency not present in C# DTO
-  //currency?: string;
 }
 
-// HOLDING ENTITY
+// Exernal security search result (from 3rd party API)
+export interface ExternalSecuritySearchDto {
+  symbol: string;
+  name: string;
+  type?: string | null;
+  region?: string | null;
+  exchange?: string | null;
+  currency: string;
+}
+
+// ============================================================================
+// HOLDING
+// ============================================================================
 
 export interface Holding {
   id: string;
@@ -148,7 +162,9 @@ export interface UpdateHoldingDto {
   averageCost?: number;
 }
 
-// TRANSACTION ENTITY
+// ============================================================================
+// TRANSACTION
+// ============================================================================
 
 export type TransactionType = "BUY" | "SELL";
 
@@ -186,7 +202,9 @@ export interface UpdateTransactionDto {
   notes?: string;
 }
 
+// ============================================================================
 // PRICE HISTORY ENTITY (for charts - FUTURE use)
+// ============================================================================
 
 export interface PriceHistory {
   id: string;
@@ -201,7 +219,9 @@ export interface PriceHistory {
   createdAt: string;
 }
 
+// ============================================================================
 // EXTERNAL PRICE DATA DTO (from 3rd party API)
+// ============================================================================
 
 export interface StockQuote {
   symbol: string;
@@ -222,9 +242,12 @@ export interface CompanyInfo {
   marketCap?: number;
 }
 
-// UI-SPECIFIC TYPES (not from backend)
+// ============================================================================
+// UI-SPECIFIC TYPES (Not from backend)
 // Used for frontend state management and calculations
 // For the Yahoo Finance-style table
+// ============================================================================
+
 export interface HoldingTableRow extends Holding {
   // All Holding fields plus:
   currentPrice: number;
