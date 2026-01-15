@@ -15,7 +15,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ROUTES, VALIDATION } from "@/utils/constants";
+// import { ROUTES, VALIDATION } from "@/utils/constants";
+import { ROUTES } from "@/utils/constants";
 
 // ============================================================================
 // VALIDATION SCHEMA (using Zod)
@@ -36,6 +37,30 @@ type LoginFormData = z.infer<typeof loginSchema>;
 // LOGIN FORM COMPONENT
 // ============================================================================
 
+/**
+ * LoginForm component provides a user interface for signing in to the application.
+ *
+ * This form uses React Hook Form for form state management and validation, with Zod as the schema resolver.
+ * It collects the user's email and password, validates them, and submits the credentials for authentication.
+ *
+ * ## How authentication works:
+ * - When the user submits the form, the `onSubmit` handler is called.
+ * - `onSubmit` calls the `login` function from the `useAuth()` hook, passing the form data.
+ * - The `login` function is defined in the application's AuthContext (typically in `AuthProvider`).
+ * - Inside `login`, the function makes an HTTP request to the backend login API endpoint (e.g., `/api/auth/login`).
+ * - The backend validates the credentials and returns a response (e.g., JWT token, user info).
+ * - On successful login, the AuthContext updates authentication state and may handle navigation.
+ * - On error, the AuthContext may show an error toast or message.
+ *
+ * ### Call Path for `await login(data)`:
+ * 1. `LoginForm` calls `useAuth()` to get the `login` function.
+ * 2. `login(data)` is called in the `onSubmit` handler.
+ * 3. `login` is implemented in the AuthContext (e.g., `AuthProvider`), where it:
+ *    - Sends a POST request to the backend login API (e.g., using `fetch` or `axios`).
+ *    - Handles the response, updates auth state, and manages side effects (like navigation or error handling).
+ *
+ * @component
+ */
 export function LoginForm() {
   const { login } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
