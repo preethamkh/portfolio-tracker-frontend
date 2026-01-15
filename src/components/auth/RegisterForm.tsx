@@ -136,90 +136,87 @@ export function RegisterForm() {
     <div className="w-full max-w-md space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-3xl font-bold tracking-tight">Create an account</h2>
-        <p className="mt-2 text-muted-foreground">
-          Start tracking your investment portfolio
-        </p>
+        <h2 className="text-3xl font-extrabold tracking-tight text-indigo-700">Create an account</h2>
+        <p className="mt-2 text-slate-500 text-base">Start tracking your investment portfolio</p>
+      </div>
+
+      {/* Divider */}
+      <div className="flex items-center my-2">
+        <div className="flex-grow border-t border-slate-200" />
+        <span className="mx-4 text-xs text-slate-400">Register</span>
+        <div className="flex-grow border-t border-slate-200" />
       </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Full Name Field (Optional) */}
         <div className="space-y-2">
-          <Label htmlFor="fullName">
-            Full Name{" "}
-            <span className="text-muted-foreground text-xs">(optional)</span>
+          <Label htmlFor="fullName" className="text-slate-700 font-semibold">
+            Full Name <span className="text-slate-400 text-xs">(optional)</span>
           </Label>
-          {/* uses the registerSchema from above for the fullName input */}
           <Input
             id="fullName"
             type="text"
             placeholder="John Doe"
             autoComplete="name"
             {...register("fullName")}
-            className={errors.fullName ? "border-destructive" : ""}
+            className={errors.fullName ? "border-destructive focus:ring-destructive" : "focus:ring-indigo-500"}
           />
           {errors.fullName && (
-            <p className="text-sm text-destructive">
-              {errors.fullName.message}
-            </p>
+            <p className="text-sm text-destructive mt-1">{errors.fullName.message}</p>
           )}
         </div>
 
         {/* Email Field */}
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-slate-700 font-semibold">Email</Label>
           <Input
             id="email"
             type="email"
             placeholder="you@example.com"
             autoComplete="email"
             {...register("email")}
-            className={errors.email ? "border-destructive" : ""}
+            className={errors.email ? "border-destructive focus:ring-destructive" : "focus:ring-indigo-500"}
           />
           {errors.email && (
-            <p className="text-sm text-destructive">{errors.email.message}</p>
+            <p className="text-sm text-destructive mt-1">{errors.email.message}</p>
           )}
         </div>
 
         {/* Password Field */}
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="text-slate-700 font-semibold">Password</Label>
           <Input
             id="password"
             type="password"
             placeholder="••••••••"
             autoComplete="new-password"
             {...register("password")}
-            className={errors.password ? "border-destructive" : ""}
+            className={errors.password ? "border-destructive focus:ring-destructive" : "focus:ring-indigo-500"}
           />
           {errors.password && (
-            <p className="text-sm text-destructive">
-              {errors.password.message}
-            </p>
+            <p className="text-sm text-destructive mt-1">{errors.password.message}</p>
           )}
         </div>
 
         {/* Confirm Password Field */}
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Label htmlFor="confirmPassword" className="text-slate-700 font-semibold">Confirm Password</Label>
           <Input
             id="confirmPassword"
             type="password"
             placeholder="••••••••"
             autoComplete="new-password"
             {...register("confirmPassword")}
-            className={errors.confirmPassword ? "border-destructive" : ""}
+            className={errors.confirmPassword ? "border-destructive focus:ring-destructive" : "focus:ring-indigo-500"}
           />
           {errors.confirmPassword && (
-            <p className="text-sm text-destructive">
-              {errors.confirmPassword.message}
-            </p>
+            <p className="text-sm text-destructive mt-1">{errors.confirmPassword.message}</p>
           )}
         </div>
 
         {/* Submit Button */}
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-150" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
@@ -232,11 +229,11 @@ export function RegisterForm() {
       </form>
 
       {/* Login Link */}
-      <div className="text-center text-sm">
-        <span className="text-muted-foreground">Already have an account? </span>
+      <div className="text-center text-sm mt-6">
+        <span className="text-slate-500">Already have an account? </span>
         <Link
           to={ROUTES.LOGIN}
-          className="text-primary hover:underline font-medium"
+          className="text-indigo-600 hover:underline font-semibold transition-colors"
         >
           Sign in
         </Link>
