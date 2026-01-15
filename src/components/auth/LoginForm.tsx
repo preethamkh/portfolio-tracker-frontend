@@ -115,35 +115,57 @@ export function LoginForm() {
     <div className="w-full max-w-md space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-3xl font-bold tracking-tight">Welcome back</h2>
-        <p className="mt-2 text-muted-foreground">
+        <h2 className="text-3xl font-extrabold tracking-tight text-indigo-700">
+          Welcome back
+        </h2>
+        <p className="mt-2 text-slate-500 text-base">
           Sign in to your account to continue
         </p>
+      </div>
+
+      {/* Divider */}
+      <div className="flex items-center my-2">
+        <div className="flex-grow border-t border-slate-200" />
+        <span className="mx-4 text-xs text-slate-400">Sign in</span>
+        <div className="flex-grow border-t border-slate-200" />
       </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Email Field */}
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-slate-700 font-semibold">
+            Email
+          </Label>
           <Input
             id="email"
             type="email"
             placeholder="you@example.com"
             autoComplete="email"
             {...register("email")}
-            className={errors.email ? "border-destructive" : ""}
+            className={
+              errors.email
+                ? "border-destructive focus:ring-destructive"
+                : "focus:ring-indigo-500"
+            }
           />
           {errors.email && (
-            <p className="text-sm text-destructive">{errors.email.message}</p>
+            <p className="text-sm text-destructive mt-1">
+              {errors.email.message}
+            </p>
           )}
         </div>
 
         {/* Password Field */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
-            <Link to="#" className="text-sm text-primary hover:underline">
+            <Label htmlFor="password" className="text-slate-700 font-semibold">
+              Password
+            </Label>
+            <Link
+              to="#"
+              className="text-sm text-indigo-600 hover:underline font-medium transition-colors"
+            >
               Forgot password?
             </Link>
           </div>
@@ -153,17 +175,25 @@ export function LoginForm() {
             placeholder="••••••••"
             autoComplete="current-password"
             {...register("password")}
-            className={errors.password ? "border-destructive" : ""}
+            className={
+              errors.password
+                ? "border-destructive focus:ring-destructive"
+                : "focus:ring-indigo-500"
+            }
           />
           {errors.password && (
-            <p className="text-sm text-destructive">
+            <p className="text-sm text-destructive mt-1">
               {errors.password.message}
             </p>
           )}
         </div>
 
         {/* Submit Button */}
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-150"
+          disabled={isSubmitting}
+        >
           {isSubmitting ? (
             <>
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
@@ -176,11 +206,11 @@ export function LoginForm() {
       </form>
 
       {/* Register Link */}
-      <div className="text-center text-sm">
-        <span className="text-muted-foreground">Don't have an account? </span>
+      <div className="text-center text-sm mt-6">
+        <span className="text-slate-500">Don't have an account? </span>
         <Link
           to={ROUTES.REGISTER}
-          className="text-primary hover:underline font-medium"
+          className="text-indigo-600 hover:underline font-semibold transition-colors"
         >
           Sign up
         </Link>
