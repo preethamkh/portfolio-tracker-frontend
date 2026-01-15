@@ -5,7 +5,7 @@
  */
 
 import { RegisterForm } from "@/components/auth/RegisterForm";
-import { ENV } from "@/utils/constants";
+//import { ENV } from "@/utils/constants";
 
 export function RegisterPage() {
   return (

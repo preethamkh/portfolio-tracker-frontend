@@ -6,10 +6,23 @@
  */
 
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
 
-export function DashboardPage() {
+import { Button } from "@/components/ui/button";
+import { RoadmapTimeline } from "@/components/common/RoadmapTimeline";
+
+function DashboardPage() {
   const { user, logout } = useAuth();
+
+  // Calculate week dates (same as LoginPage)
+  const today = new Date();
+  const weekDates = Array.from({ length: 4 }, (_, i) => {
+    const d = new Date(today.getTime() + (i + 1) * 7 * 24 * 60 * 60 * 1000);
+    return d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-100 to-indigo-100 font-sans">
@@ -34,8 +47,15 @@ export function DashboardPage() {
         </div>
       </header>
 
+      {/* Roadmap Timeline (condensed) */}
+      <section className="container mx-auto px-4 py-6 max-w-3xl">
+        <div className="bg-gradient-to-br from-white via-indigo-50 to-blue-100 border border-indigo-200 rounded-2xl p-4 shadow-md">
+          <RoadmapTimeline weekDates={weekDates} condensed />
+        </div>
+      </section>
+
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-8">
         <div className="bg-white border border-slate-200 rounded-2xl p-10 shadow-xl max-w-2xl mx-auto text-center">
           <h2 className="text-3xl font-extrabold text-indigo-700 mb-4">
             Authentication Working!
@@ -77,3 +97,5 @@ export function DashboardPage() {
     </div>
   );
 }
+
+export default DashboardPage;
