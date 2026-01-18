@@ -13,7 +13,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { RegisterPage } from "@/pages/auth/RegisterPage";
-import { DashboardPage } from "@/pages/dashboard/DashboardPage";
+import DashboardPage from "@/pages/dashboard/DashboardPage";
 import { queryClient } from "@/lib/queryClient";
 import { ROUTES } from "@/utils/constants";
 
