@@ -9,20 +9,10 @@ import { useAuth } from "@/contexts/AuthContext";
 
 import { Button } from "@/components/ui/button";
 import { RoadmapTimeline } from "@/components/common/RoadmapTimeline";
+import { ROADMAP } from "@/utils/roadmap";
 
 function DashboardPage() {
   const { user, logout } = useAuth();
-
-  // Calculate week dates (same as LoginPage)
-  const today = new Date();
-  const weekDates = Array.from({ length: 4 }, (_, i) => {
-    const d = new Date(today.getTime() + (i + 1) * 7 * 24 * 60 * 60 * 1000);
-    return d.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-gray-100 to-teal-50 font-sans">
@@ -68,7 +58,7 @@ function DashboardPage() {
       {/* Roadmap Timeline (condensed) */}
       <section className="container mx-auto px-4 py-6 max-w-3xl">
         <div className="bg-gradient-to-br from-white via-teal-50 to-blue-50 border border-teal-300 rounded-2xl p-4 shadow-md">
-          <RoadmapTimeline weekDates={weekDates} condensed />
+          <RoadmapTimeline roadmap={ROADMAP} condensed />
         </div>
       </section>
 

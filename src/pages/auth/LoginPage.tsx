@@ -9,20 +9,10 @@ import { LoginForm } from "@/components/auth/LoginForm";
 
 import { ENV } from "@/utils/constants";
 import { RoadmapTimeline } from "@/components/common/RoadmapTimeline";
+import { ROADMAP } from "@/utils/roadmap";
 import { ChartBarIcon } from "@heroicons/react/24/solid";
 
 export function LoginPage() {
-  // Calculate week dates
-  const today = new Date();
-  const weekDates = Array.from({ length: 4 }, (_, i) => {
-    const d = new Date(today.getTime() + (i + 1) * 7 * 24 * 60 * 60 * 1000);
-    return d.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  });
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-gray-100 to-teal-50 px-4 font-sans">
       <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
@@ -48,7 +38,7 @@ export function LoginPage() {
 
           {/* Roadmap Timeline */}
           <div className="bg-gradient-to-br from-white via-teal-50 to-blue-50 border border-teal-300 rounded-2xl p-6 shadow-xl">
-            <RoadmapTimeline weekDates={weekDates} />
+            <RoadmapTimeline roadmap={ROADMAP} />
           </div>
 
           {/* Current Capabilities */}
