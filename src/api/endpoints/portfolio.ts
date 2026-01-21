@@ -4,18 +4,20 @@
  */
 
 import apiClient from "../client";
-import { PortfolioDto, CreatePortfolioDto, UpdatePortfolioDto } from "@/types";
+import {
+  Portfolio as Portfolio,
+  CreatePortfolioDto,
+  UpdatePortfolioDto,
+} from "@/types";
 
 /**
  * Get all portfolios for the authenticated user.
  *
  * GET /api/users/{userID}/portfolios
  */
-export async function getUserPortfolios(
-  userId: string
-): Promise<PortfolioDto[]> {
-  const response = await apiClient.get<PortfolioDto[]>(
-    `/users/${userId}/portfolios`
+export async function getUserPortfolios(userId: string): Promise<Portfolio[]> {
+  const response = await apiClient.get<Portfolio[]>(
+    `/users/${userId}/portfolios`,
   );
   return response.data;
 }
@@ -27,10 +29,10 @@ export async function getUserPortfolios(
  */
 export async function getPortfolioById(
   userId: string,
-  portfolioId: string
-): Promise<PortfolioDto> {
-  const response = await apiClient.get<PortfolioDto>(
-    `/users/${userId}/portfolios/${portfolioId}`
+  portfolioId: string,
+): Promise<Portfolio> {
+  const response = await apiClient.get<Portfolio>(
+    `/users/${userId}/portfolios/${portfolioId}`,
   );
   return response.data;
 }
@@ -41,11 +43,11 @@ export async function getPortfolioById(
  */
 export async function createPortfolio(
   userId: string,
-  data: CreatePortfolioDto
-): Promise<PortfolioDto> {
-  const response = await apiClient.post<PortfolioDto>(
+  data: CreatePortfolioDto,
+): Promise<Portfolio> {
+  const response = await apiClient.post<Portfolio>(
     `/users/${userId}/portfolios`,
-    data
+    data,
   );
   return response.data;
 }
@@ -57,11 +59,11 @@ export async function createPortfolio(
 export async function updatePortfolio(
   userId: string,
   portfolioId: string,
-  data: UpdatePortfolioDto
-): Promise<PortfolioDto> {
-  const response = await apiClient.put<PortfolioDto>(
+  data: UpdatePortfolioDto,
+): Promise<Portfolio> {
+  const response = await apiClient.put<Portfolio>(
     `/users/${userId}/portfolios/${portfolioId}`,
-    data
+    data,
   );
   return response.data;
 }
@@ -72,7 +74,7 @@ export async function updatePortfolio(
  */
 export async function deletePortfolio(
   userId: string,
-  portfolioId: string
+  portfolioId: string,
 ): Promise<void> {
   await apiClient.delete(`/users/${userId}/portfolios/${portfolioId}`);
 }
@@ -85,7 +87,7 @@ export async function deletePortfolio(
 // ideal PATCH, not PUT (which implies full replacement), but backend is currently using PUT
 export async function setDefaultPortfolio(
   userId: string,
-  portfolioId: string
+  portfolioId: string,
 ): Promise<void> {
   await apiClient.put(`/users/${userId}/portfolios/${portfolioId}/set-default`);
 }
