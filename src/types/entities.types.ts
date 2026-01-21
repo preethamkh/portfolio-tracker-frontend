@@ -37,7 +37,7 @@ export interface UpdateUserDto {
 // PORTFOLIO
 // ============================================================================
 
-export interface PortfolioDto {
+export interface Portfolio {
   id: string;
   userId: string;
   name: string;
