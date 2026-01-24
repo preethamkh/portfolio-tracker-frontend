@@ -231,13 +231,6 @@ export function DashboardPage() {
         />
       </main>
 
-      {/* Roadmap Timeline (condensed) */}
-      <section className="container mx-auto px-4 py-6 max-w-3xl">
-        <div className="bg-gradient-to-br from-white via-teal-50 to-blue-50 border border-teal-300 rounded-2xl p-4 shadow-md">
-          <RoadmapTimeline roadmap={ROADMAP} condensed />
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="mt-12 text-center text-xs text-gray-400 pb-8">
         &copy; {new Date().getFullYear()} Portfolio Tracker. All rights
