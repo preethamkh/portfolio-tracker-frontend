@@ -42,23 +42,53 @@ export function DashboardPage() {
   // Calculate portfolio summary
   const summary = useMemo(() => {
     if (!holdings.length) {
-      return { totalValue: 0, totalCost: 0, totalGain: 0, totalGainPercent: 0 };
+      return {
+        totalValue: 0,
+        totalCost: 0,
+        totalGain: 0,
+        totalGainPercent: 0,
+        hasMissingPrices: false
+      };
     }
 
+    // DEBUG: Log raw API response to inspect structure
+    console.log('Holdings data:', holdings);
+
+    let hasMissingPrices = false;
+
     const totalValue = holdings.reduce((sum, h) => {
-      const currentPrice = h.security.currentPrice || 0;
-      return sum + h.totalShares * currentPrice;
+      // SAFETY: Backend may not populate security object (EF navigation property issue)
+      // Skip this holding if security is undefined/null to prevent crash
+      if (!h?.security) {
+        console.warn('Holding missing security object:', h);
+        hasMissingPrices = true;
+        return sum;
+      }
+
+      // SAFETY: Use ?? (nullish coalescing) to default to 0 if currentPrice is null/undefined
+      // This handles cases where backend SecurityDto doesn't include currentPrice
+      const currentPrice = h.security.currentPrice ?? 0;
+
+      // Track if price data is unavailable for warning banner
+      if (h.security.currentPrice === undefined || h.security.currentPrice === null) {
+        hasMissingPrices = true;
+      }
+
+      // SAFETY: Protect totalShares in case it's null/undefined
+      return sum + (h.totalShares ?? 0) * currentPrice;
     }, 0);
 
     const totalCost = holdings.reduce((sum, h) => {
-      const avgCost = h.averageCost || 0;
-      return sum + h.totalShares * avgCost;
+      // SAFETY: Use ?? for all numeric fields that might be null/undefined
+      const avgCost = h.averageCost ?? 0;
+      const shares = h.totalShares ?? 0;
+      return sum + shares * avgCost;
     }, 0);
 
     const totalGain = totalValue - totalCost;
     const totalGainPercent = totalCost > 0 ? totalGain / totalCost : 0;
 
-    return { totalValue, totalCost, totalGain, totalGainPercent };
+    return { totalValue, totalCost, totalGain, totalGainPercent, hasMissingPrices };
   }, [holdings]);
 
   // ============================================================================
@@ -164,6 +194,24 @@ export function DashboardPage() {
               </p>
             </div>
           </div>
+
+          {/* VISUAL FEEDBACK: Show warning when price data is missing */}
+          {/* hasMissingPrices flag is set when security object or currentPrice is null/undefined */}
+          {summary.hasMissingPrices && (
+            <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-2">
+              <svg className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <div className="flex-1">
+                <p className="text-sm text-yellow-800 font-medium">
+                  Price data unavailable for some holdings
+                </p>
+                <p className="text-xs text-yellow-700 mt-1">
+                  Total value calculations may be incomplete. Market prices will be fetched when available.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

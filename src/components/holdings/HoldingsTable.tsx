@@ -55,18 +55,44 @@ export function HoldingsTable({ holdings, isLoading, onRefresh }: HoldingsTableP
 
     /**
      * Enhance Holdings with calculated fields
+     * SAFETY: Backend may not populate security navigation property
      */
-
     const enrichedHoldings = useMemo(() => {
         return holdings.map((holding) => {
-            // Current price (from security.currentPrice if available, or use a default)
-            const currentPrice = holding.security.currentPrice || 0;
+            // SAFETY: If backend didn't include security (EF navigation issue), create mock object
+            // This prevents cascading errors in sorting and rendering
+            if (!holding?.security) {
+                console.warn('Holding missing security object:', holding);
+                return {
+                    ...holding,
+                    // Mock security object with safe defaults to prevent undefined errors
+                    security: {
+                        id: '',
+                        symbol: 'N/A',
+                        name: 'Unknown Security',
+                        currency: 'USD',
+                        securityType: 'Unknown',
+                        createdAt: '',
+                        updatedAt: '',
+                    },
+                    currentPrice: 0,
+                    marketValue: 0,
+                    bookValue: 0,
+                    unrealizedGain: 0,
+                    unrealizedGainPercent: 0,
+                };
+            }
+
+            // SAFETY: currentPrice may not exist in backend SecurityDto
+            // Use ?? (nullish coalescing) to default to 0
+            const currentPrice = holding.security.currentPrice ?? 0;
 
             // Market value = shares * current price
-            const marketValue = holding.totalShares * currentPrice;
+            // SAFETY: Protect totalShares and averageCost with ?? 0
+            const marketValue = (holding.totalShares ?? 0) * currentPrice;
 
             // Book value (cost basis) = shares * average cost
-            const bookValue = holding.totalShares * (holding.averageCost || 0);
+            const bookValue = (holding.totalShares ?? 0) * (holding.averageCost ?? 0);
 
             // Unrealized gain/loss
             const unrealizedGain = marketValue - bookValue;
@@ -97,34 +123,35 @@ export function HoldingsTable({ holdings, isLoading, onRefresh }: HoldingsTableP
             let bValue: any;  // Will hold the value to compare from 'b'
 
             // 2. Extract the SAME FIELD from BOTH objects based on sortField
+            // SAFETY: All fields use ?. and ?? to handle undefined/null values
             switch (sortField) {
                 case 'symbol':
-                    aValue = a.security.symbol;  // e.g., "AAPL"
-                    bValue = b.security.symbol;  // e.g., "TSLA"
+                    aValue = a.security?.symbol ?? '';  // Optional chaining + default to empty string
+                    bValue = b.security?.symbol ?? '';
                     break;
                 case 'shares':
-                    aValue = a.totalShares;      // e.g., 100
-                    bValue = b.totalShares;      // e.g., 50
+                    aValue = a.totalShares ?? 0;      // Nullish coalescing: default to 0
+                    bValue = b.totalShares ?? 0;
                     break;
                 case 'price':
-                    aValue = a.currentPrice;
-                    bValue = b.currentPrice;
+                    aValue = a.currentPrice ?? 0;     // currentPrice may not exist in SecurityDto
+                    bValue = b.currentPrice ?? 0;
                     break;
                 case 'cost':
-                    aValue = a.averageCost || 0;
-                    bValue = b.averageCost || 0;
+                    aValue = a.averageCost ?? 0;
+                    bValue = b.averageCost ?? 0;
                     break;
                 case 'value':
-                    aValue = a.marketValue;
-                    bValue = b.marketValue;
+                    aValue = a.marketValue ?? 0;
+                    bValue = b.marketValue ?? 0;
                     break;
                 case 'gain':
-                    aValue = a.unrealizedGain;
-                    bValue = b.unrealizedGain;
+                    aValue = a.unrealizedGain ?? 0;
+                    bValue = b.unrealizedGain ?? 0;
                     break;
                 case 'gainPercent':
-                    aValue = a.unrealizedGainPercent;
-                    bValue = b.unrealizedGainPercent;
+                    aValue = a.unrealizedGainPercent ?? 0;
+                    bValue = b.unrealizedGainPercent ?? 0;
                     break;
                 default:
                     return 0;
@@ -335,8 +362,12 @@ export function HoldingsTable({ holdings, isLoading, onRefresh }: HoldingsTableP
                                 </TableCell>
 
                                 {/* Last Price */}
+                                {/* SAFETY: Show "N/A" instead of $0 when currentPrice is actually missing */}
                                 <TableCell className="text-right numeric">
-                                    {formatCurrency(holding.currentPrice, holding.security.currency)}
+                                    {holding.security.currentPrice !== undefined && holding.security.currentPrice !== null
+                                        ? formatCurrency(holding.currentPrice, holding.security.currency)
+                                        : <span className="text-muted-foreground italic">N/A</span>
+                                    }
                                 </TableCell>
 
                                 {/* Avg Cost */}
