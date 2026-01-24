@@ -149,4 +149,231 @@ export function HoldingsTable({ holdings, isLoading, onRefresh }: HoldingsTableP
     // - sortDirection: When user toggles between ascending/descending
     // This prevents unnecessary re-sorting on every render (performance optimization)
 
+    // ============================================================================
+    // HANDLERS
+    // ============================================================================
+
+    const handleSort = (field: SortField) => {
+        if (sortField === field) {
+            // Toggle sort direction
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            // Set new sort field and default to ascending
+            setSortField(field);
+            setSortDirection('asc');
+        }
+    };
+
+    // ============================================================================
+    // RENDER: LOADING STATE
+    // ============================================================================
+
+    if (isLoading) {
+        return (
+            <div className="space-y-4">
+                {/* Skeleton loading table, arbitraty 5 placeholder rows */}
+                {[...Array(5)].map((_, i) => (
+                    <div key={i} className="h-12 bg-muted animate-pulse rounded" />
+                ))}
+            </div>
+        );
+    }
+
+    // ============================================================================
+    // RENDER: EMPTY STATE
+    // ============================================================================
+
+    if (sortedHoldings.length === 0) {
+        return (
+            <div className="text-center py-12 border border-dashed border-border rounded-lg">
+                <p className="text-muted-foreground mb-4">No holdings in this portfolio yet</p>
+                <Button variant="outline">Add Your First Holding</Button>
+            </div>
+        );
+    }
+
+    // ============================================================================
+    // RENDER: TABLE
+    // ============================================================================
+
+    return (
+        <div className="space-y-4">
+            {/* Header with Refresh */}
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">Holdings</h2>
+                {onRefresh && (
+                    <Button variant="outline" size="sm" onClick={onRefresh}>
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                        Refresh
+                    </Button>
+                )}
+            </div>
+
+            {/* Table */}
+            <div className="border rounded-lg">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="bg-muted/50">
+                            {/* Symbol */}
+                            <TableHead>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleSort('symbol')}
+                                    className="font-semibold"
+                                >
+                                    Symbol
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </TableHead>
+
+                            {/* Shares */}
+                            <TableHead className="text-right">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleSort('shares')}
+                                    className="font-semibold"
+                                >
+                                    Shares
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </TableHead>
+
+                            {/* Last Price */}
+                            <TableHead className="text-right">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleSort('price')}
+                                    className="font-semibold"
+                                >
+                                    Last Price
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </TableHead>
+
+                            {/* Avg Cost */}
+                            <TableHead className="text-right">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleSort('cost')}
+                                    className="font-semibold"
+                                >
+                                    Avg Cost
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </TableHead>
+
+                            {/* Market Value */}
+                            <TableHead className="text-right">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleSort('value')}
+                                    className="font-semibold"
+                                >
+                                    Market Value
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </TableHead>
+
+                            {/* Total Gain/Loss */}
+                            <TableHead className="text-right">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleSort('gain')}
+                                    className="font-semibold"
+                                >
+                                    Total Gain
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </TableHead>
+
+                            {/* Gain % */}
+                            <TableHead className="text-right">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleSort('gainPercent')}
+                                    className="font-semibold"
+                                >
+                                    Gain %
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+
+                    <TableBody>
+                        {sortedHoldings.map((holding) => (
+                            <TableRow key={holding.id} className="hover:bg-muted/30">
+                                {/* Symbol */}
+                                <TableCell className="font-medium">
+                                    <div>
+                                        <div className="font-bold text-primary">
+                                            {holding.security.symbol}
+                                        </div>
+                                        <div className="text-xs text-muted-foreground">
+                                            {holding.security.name}
+                                        </div>
+                                    </div>
+                                </TableCell>
+
+                                {/* Shares */}
+                                <TableCell className="text-right numeric">
+                                    {formatShares(holding.totalShares)}
+                                </TableCell>
+
+                                {/* Last Price */}
+                                <TableCell className="text-right numeric">
+                                    {formatCurrency(holding.currentPrice, holding.security.currency)}
+                                </TableCell>
+
+                                {/* Avg Cost */}
+                                <TableCell className="text-right numeric">
+                                    {formatCurrency(holding.averageCost || 0, holding.security.currency)}
+                                </TableCell>
+
+                                {/* Market Value */}
+                                <TableCell className="text-right numeric font-semibold">
+                                    {formatCurrency(holding.marketValue, holding.security.currency)}
+                                </TableCell>
+
+                                {/* Total Gain/Loss */}
+                                <TableCell
+                                    className={cn(
+                                        'text-right numeric font-semibold',
+                                        holding.unrealizedGain >= 0 ? 'text-profit' : 'text-loss'
+                                    )}
+                                >
+                                    {formatCurrency(holding.unrealizedGain, holding.security.currency)}
+                                </TableCell>
+
+                                {/* Gain % */}
+                                <TableCell
+                                    className={cn(
+                                        'text-right numeric font-semibold',
+                                        holding.unrealizedGainPercent >= 0 ? 'text-profit' : 'text-loss'
+                                    )}
+                                >
+                                    {formatPercent(holding.unrealizedGainPercent)}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+
+            {/* Summary Footer */}
+            <div className="bg-muted/30 rounded-lg p-4 border border-border">
+                <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Total Holdings:</span>
+                    <span className="font-semibold">{sortedHoldings.length}</span>
+                </div>
+            </div>
+        </div>
+    );
 }
