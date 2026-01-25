@@ -22,7 +22,7 @@ export const ROADMAP: RoadmapItem[] = [
     status: "done",
   },
   {
-    date: "January 25, 2026",
+    date: "January 26, 2026",
     title: "Portfolio Dashboard & Holdings Table",
     description: "Holdings table, portfolio overview.",
     icon: <ChartBarIcon className="w-6 h-6 text-purple-500" />,
