@@ -37,7 +37,7 @@ export function DashboardPage() {
     isLoading: isLoadingHoldings,
     error: holdingsError,
     refetch: refetchHoldings,
-  } = useGetPortfolioHoldings(portfolio?.id || "", user?.id || ""); //todo: check if this is correct
+  } = useGetPortfolioHoldings(portfolio?.id || "", user?.id || "");
 
   // Calculate portfolio summary
   const summary = useMemo(() => {
