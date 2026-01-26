@@ -39,10 +39,10 @@ export default function SecuritySearchCombobox({
 
   // Update local state when query results change
   useEffect(() => {
-    if (searchResults && query.length >= 2) {
+    if (searchResults) {
       setResults(searchResults);
-      setIsOpen(searchResults.length > 0);
-    } else {
+      setIsOpen(searchResults.length > 0 && query.length >= 2);
+    } else if (query.length < 2) {
       setResults([]);
       setIsOpen(false);
     }
@@ -117,7 +117,9 @@ export default function SecuritySearchCombobox({
           className="pl-10 pr-10"
         />
         {isLoading && (
-          <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-gray-400" />
+          <div className="absolute right-3 top-0 bottom-0 flex items-center">
+            <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+          </div>
         )}
       </div>
 
