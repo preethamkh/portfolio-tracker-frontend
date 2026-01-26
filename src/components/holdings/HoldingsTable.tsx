@@ -25,7 +25,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown, RefreshCw, Inbox } from "lucide-react";
 import {
   formatCurrency,
-  formatNumber,
   formatPercent,
   formatShares,
 } from "@/utils/formatters";
