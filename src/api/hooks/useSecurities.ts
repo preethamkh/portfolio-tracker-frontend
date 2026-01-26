@@ -82,7 +82,7 @@ export function useSecurityBySymbol(symbol: string, enabled = true) {
  * Hook: Get or create security by symbol
  * Useful when adding transactions - ensures security exists
  */
-export function useOrCreateSecurity() {
+export function useGetOrCreateSecurity() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   return useMutation({
