@@ -97,14 +97,14 @@ export function AssetAllocationChart({ holdings }: AssetAllocationChartProps) {
 
   if (chartData.length === 0) {
     return (
-      <div className="flex items-center justify-center h-80 text-gray-500">
+      <div className="flex items-center justify-center h-64 text-gray-500">
         <p>No holdings to display</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-80">
+    <div className="w-full h-64">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
@@ -113,7 +113,7 @@ export function AssetAllocationChart({ holdings }: AssetAllocationChartProps) {
             cy="50%"
             labelLine={false}
             label={renderLabel}
-            outerRadius={100}
+            outerRadius={80}
             fill="#8884d8"
             dataKey="value"
           >
