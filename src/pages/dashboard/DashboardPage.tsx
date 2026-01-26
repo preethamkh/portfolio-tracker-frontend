@@ -21,6 +21,15 @@ import { ErrorDisplay } from "@/components/common/ErrorDisplay";
 import AddTransactionDialog from "@/components/transactions/AddTransactionDialog";
 import { AssetAllocationChart } from "@/components/charts/AssetAllocationChart";
 import { GainLossBarChart } from "@/components/charts/GainLossBarChart";
+import { MarketIndicesWidget } from "@/components/common/MarketIndicesWidget";
+import {
+  TrendingUp,
+  DollarSign,
+  Target,
+  Percent,
+  TrendingDown,
+  Clock,
+} from "lucide-react";
 
 export function DashboardPage() {
   const { user, logout } = useAuth();
@@ -50,6 +59,10 @@ export function DashboardPage() {
         totalGain: 0,
         totalGainPercent: 0,
         hasMissingPrices: false,
+        topPerformer: null,
+        bottomPerformer: null,
+        totalShares: 0,
+        holdingsCount: 0,
       };
     }
 
@@ -94,12 +107,47 @@ export function DashboardPage() {
     // Calculate portfolio-level gain percentage
     const totalGainPercent = totalCost > 0 ? totalGain / totalCost : 0;
 
+    // Find top and bottom performers
+    const holdingsWithGains = holdings
+      .map((h) => ({
+        symbol:
+          (h as any).security?.symbol || (h as any).securitySymbol || "Unknown",
+        name: (h as any).security?.name || (h as any).securityName || "Unknown",
+        gainLoss: (h as any).unrealizedGainLoss ?? 0,
+        gainLossPercent: (h as any).unrealizedGainLossPercent ?? 0,
+      }))
+      .filter((h) => h.symbol !== "Unknown");
+
+    const topPerformer =
+      holdingsWithGains.length > 0
+        ? holdingsWithGains.reduce((max, h) =>
+            h.gainLoss > max.gainLoss ? h : max,
+          )
+        : null;
+
+    const bottomPerformer =
+      holdingsWithGains.length > 0
+        ? holdingsWithGains.reduce((min, h) =>
+            h.gainLoss < min.gainLoss ? h : min,
+          )
+        : null;
+
+    // Calculate total shares across all holdings
+    const totalShares = holdings.reduce(
+      (sum, h) => sum + (h.totalShares ?? 0),
+      0,
+    );
+
     return {
       totalValue,
       totalCost,
       totalGain,
       totalGainPercent,
       hasMissingPrices,
+      topPerformer,
+      bottomPerformer,
+      totalShares,
+      holdingsCount: holdings.length,
     };
   }, [holdings]);
 
@@ -188,13 +236,19 @@ export function DashboardPage() {
         </div>
       </header>
 
+      {/* Market Indices */}
+      <MarketIndicesWidget />
+
       {/* Portfolio Summary */}
       <div className="bg-white border-b border-teal-200">
         <div className="container mx-auto px-4 py-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {/* Total Value */}
             <div>
-              <p className="text-sm text-gray-600 mb-1">Total Value</p>
+              <div className="flex items-center gap-2 mb-1">
+                <TrendingUp className="h-4 w-4 text-teal-600" />
+                <p className="text-sm text-gray-600">Total Value</p>
+              </div>
               <p className="text-2xl font-bold text-gray-900">
                 {formatCurrency(
                   summary.totalValue,
@@ -205,7 +259,10 @@ export function DashboardPage() {
 
             {/* Total Cost */}
             <div>
-              <p className="text-sm text-gray-600 mb-1">Total Cost</p>
+              <div className="flex items-center gap-2 mb-1">
+                <DollarSign className="h-4 w-4 text-blue-600" />
+                <p className="text-sm text-gray-600">Total Cost</p>
+              </div>
               <p className="text-2xl font-bold text-gray-900">
                 {formatCurrency(
                   summary.totalCost,
@@ -216,7 +273,10 @@ export function DashboardPage() {
 
             {/* Total Gain/Loss */}
             <div>
-              <p className="text-sm text-gray-600 mb-1">Total Gain/Loss</p>
+              <div className="flex items-center gap-2 mb-1">
+                <Target className="h-4 w-4 text-purple-600" />
+                <p className="text-sm text-gray-600">Total Gain/Loss</p>
+              </div>
               <p
                 className={`text-2xl font-bold ${
                   summary.totalGain >= 0 ? "text-profit" : "text-loss"
@@ -231,7 +291,10 @@ export function DashboardPage() {
 
             {/* Gain % */}
             <div>
-              <p className="text-sm text-gray-600 mb-1">Return %</p>
+              <div className="flex items-center gap-2 mb-1">
+                <Percent className="h-4 w-4 text-indigo-600" />
+                <p className="text-sm text-gray-600">Return %</p>
+              </div>
               <p
                 className={`text-2xl font-bold ${
                   summary.totalGainPercent >= 0 ? "text-profit" : "text-loss"
@@ -241,6 +304,96 @@ export function DashboardPage() {
               </p>
             </div>
           </div>
+
+          {/* Top & Bottom Performers */}
+          {holdings.length > 0 &&
+            (summary.topPerformer || summary.bottomPerformer) && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                {/* Top Performer */}
+                {summary.topPerformer && (
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <TrendingUp className="h-5 w-5 text-green-600" />
+                      <p className="text-sm font-semibold text-green-900">
+                        Best Performer
+                      </p>
+                    </div>
+                    <p className="text-lg font-bold text-gray-900">
+                      {summary.topPerformer.symbol}
+                    </p>
+                    <p className="text-xs text-gray-600 mb-1">
+                      {summary.topPerformer.name}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-xl font-bold text-green-600">
+                        +
+                        {formatCurrency(
+                          summary.topPerformer.gainLoss,
+                          portfolio?.currency || "USD",
+                        )}
+                      </p>
+                      <p className="text-sm text-green-600">
+                        ({formatPercent(summary.topPerformer.gainLossPercent)})
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Bottom Performer */}
+                {summary.bottomPerformer &&
+                  summary.bottomPerformer.gainLoss < 0 && (
+                    <div className="bg-gradient-to-br from-red-50 to-pink-50 border border-red-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <TrendingDown className="h-5 w-5 text-red-600" />
+                        <p className="text-sm font-semibold text-red-900">
+                          Worst Performer
+                        </p>
+                      </div>
+                      <p className="text-lg font-bold text-gray-900">
+                        {summary.bottomPerformer.symbol}
+                      </p>
+                      <p className="text-xs text-gray-600 mb-1">
+                        {summary.bottomPerformer.name}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-xl font-bold text-red-600">
+                          {formatCurrency(
+                            summary.bottomPerformer.gainLoss,
+                            portfolio?.currency || "USD",
+                          )}
+                        </p>
+                        <p className="text-sm text-red-600">
+                          (
+                          {formatPercent(
+                            summary.bottomPerformer.gainLossPercent,
+                          )}
+                          )
+                        </p>
+                      </div>
+                    </div>
+                  )}
+              </div>
+            )}
+
+          {/* Quick Stats Bar */}
+          {holdings.length > 0 && (
+            <div className="mt-4 flex items-center gap-6 text-sm text-gray-600 bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-gray-700">Holdings:</span>
+                <span>{summary.holdingsCount}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-gray-700">
+                  Total Shares:
+                </span>
+                <span>{summary.totalShares.toLocaleString()}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-gray-500" />
+                <span className="text-xs">Last updated: just now</span>
+              </div>
+            </div>
+          )}
 
           {/* VISUAL FEEDBACK: Show warning when price data is missing */}
           {/* hasMissingPrices flag is set when security object or currentPrice is null/undefined */}
