@@ -71,40 +71,27 @@ export function HoldingsTable({
 
   /**
    * Enhance Holdings with calculated fields
-   * SAFETY: Backend may not populate security navigation property
+   * SAFETY: Backend may return flat structure or nested security object
    */
   const enrichedHoldings = useMemo(() => {
     return holdings.map((holding) => {
-      // SAFETY: If backend didn't include security (EF navigation issue), create mock object
-      // This prevents cascading errors in sorting and rendering
-      if (!holding?.security) {
-        console.warn("Holding missing security object:", holding);
-        return {
-          ...holding,
-          // Mock security object with safe defaults to prevent undefined errors
-          security: {
-            id: "",
-            symbol: "N/A",
-            name: "Unknown Security",
-            currency: "USD",
-            securityType: "Unknown",
-            createdAt: "",
-            updatedAt: "",
-          },
-          currentPrice: 0,
-          marketValue: 0,
-          bookValue: 0,
-          unrealizedGain: 0,
-          unrealizedGainPercent: 0,
-        };
-      }
+      // Handle both flat and nested security structures
+      const security = holding.security || {
+        id: holding.securityId || "",
+        symbol: (holding as any).symbol || "N/A",
+        name: (holding as any).securityName || "Unknown Security",
+        currency: (holding as any).currency || "USD",
+        securityType: (holding as any).securityType || "Unknown",
+        currentPrice: (holding as any).currentPrice,
+        createdAt: "",
+        updatedAt: "",
+      };
 
-      // SAFETY: currentPrice may not exist in backend SecurityDto
-      // Use ?? (nullish coalescing) to default to 0
-      const currentPrice = holding.security.currentPrice ?? 0;
+      // SAFETY: currentPrice may be in different locations
+      const currentPrice =
+        security.currentPrice ?? (holding as any).currentPrice ?? 0;
 
       // Market value = shares * current price
-      // SAFETY: Protect totalShares and averageCost with ?? 0
       const marketValue = (holding.totalShares ?? 0) * currentPrice;
 
       // Book value (cost basis) = shares * average cost
@@ -117,6 +104,7 @@ export function HoldingsTable({
 
       return {
         ...holding,
+        security,
         currentPrice,
         marketValue,
         bookValue,
