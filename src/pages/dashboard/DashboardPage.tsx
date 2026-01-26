@@ -19,6 +19,7 @@ import { LoadingPage } from "@/components/common/LoadingSpinner";
 import { ErrorDisplay } from "@/components/common/ErrorDisplay";
 
 import AddTransactionDialog from "@/components/transactions/AddTransactionDialog";
+import { AssetAllocationChart } from "@/components/charts/AssetAllocationChart";
 
 export function DashboardPage() {
   const { user, logout } = useAuth();
@@ -271,6 +272,22 @@ export function DashboardPage() {
 
       {/* Main Content - Holdings Table */}
       <main className="container mx-auto px-4 py-8">
+        {/* Asset Allocation Chart */}
+        {holdings.length > 0 && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+            <div className="mb-4">
+              <h2 className="text-xl font-semibold text-gray-900">
+                Asset Allocation
+              </h2>
+              <p className="text-sm text-gray-500">
+                Portfolio distribution by security
+              </p>
+            </div>
+            <AssetAllocationChart holdings={holdings} />
+          </div>
+        )}
+
+        {/* Holdings Table */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-xl font-semibold text-gray-900">Holdings</h2>
