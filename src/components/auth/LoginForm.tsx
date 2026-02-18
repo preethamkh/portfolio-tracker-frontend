@@ -118,6 +118,10 @@ export function LoginForm() {
         <h2 className="text-3xl font-extrabold tracking-tight text-teal-700">
           Welcome back
         </h2>
+        <h2 className="text-lg font-bold tracking-tight text-red-500">
+          Attention! Backend is currently being migrated to another provider.
+          Stay tuned for updates.
+        </h2>
         <p className="mt-2 text-gray-500 text-base">
           Sign in to your account to continue
         </p>
