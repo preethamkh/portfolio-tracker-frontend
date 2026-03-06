@@ -30,14 +30,14 @@ export const ROADMAP: RoadmapItem[] = [
     status: "done",
   },
   {
-    date: "February (TBD), 2026",
+    date: "March (TBD), 2026",
     title: "Transactions & Analytics Features",
     description: "Transaction history, analytics.",
     icon: <ClockIcon className="w-6 h-6 text-blue-400" />,
     status: "upcoming",
   },
   {
-    date: "February (TBD), 2026",
+    date: "March (TBD), 2026",
     title: "UI Polish, Bug Fixes, Documentation",
     description: "Bug fixes, UI & E2E tests, docs.",
     icon: <RocketLaunchIcon className="w-6 h-6 text-indigo-500" />,
